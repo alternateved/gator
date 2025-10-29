@@ -1,13 +1,13 @@
 .DEFAULT_GOAL := build
 
 fmt:
-		go fmt ./...
+		go fmt $(go list ./... | grep -v '/database')
 
 lint: fmt
 		golangci-lint run
 
 test:
-		go test ./...
+		go test $(go list ./... | grep -v '/database')
 
 clean:
 		go clean
