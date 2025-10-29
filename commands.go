@@ -23,12 +23,6 @@ func (c *commands) run(s *state, cmd command) error {
 	return nil
 }
 
-func (c *commands) register(name string, f func(*state, command) error) error {
-	_, ok := c.handlers[name]
-	if ok {
-		return fmt.Errorf("command %s already registered", name)
-	}
-
+func (c *commands) register(name string, f func(*state, command) error) {
 	c.handlers[name] = f
-	return nil
 }

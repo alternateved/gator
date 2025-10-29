@@ -31,20 +31,9 @@ func main() {
 		handlers: make(map[string]func(*state, command) error),
 	}
 
-	err = cmds.register("login", handlerLogin)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = cmds.register("register", handlerRegister)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = cmds.register("reset", handlerReset)
-	if err != nil {
-		log.Fatal(err)
-	}
+	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")

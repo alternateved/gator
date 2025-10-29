@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/alternateved/gator/internal/database"
@@ -17,7 +16,7 @@ func handlerLogin(s *state, cmd command) error {
 
 	user, err := s.db.GetUser(context.Background(), cmd.args[0])
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("couldn't find user: %w", err)
 	}
 
 	err = s.config.SetUser(user.Name)
@@ -25,7 +24,7 @@ func handlerLogin(s *state, cmd command) error {
 		return fmt.Errorf("couldn't set current user: %w", err)
 	}
 
-	fmt.Printf("user %s has been set\n", cmd.args[0])
+	fmt.Println("User switched successfully!")
 	return nil
 }
 
@@ -34,35 +33,31 @@ func handlerRegister(s *state, cmd command) error {
 		return fmt.Errorf("usage: %s <name>", cmd.name)
 	}
 
-	uuid := uuid.New()
-	now := time.Now()
-	params := database.CreateUserParams{
-		ID:        uuid,
-		CreatedAt: now,
-		UpdatedAt: now,
-		Name:      cmd.args[0],
-	}
-
-	user, err := s.db.CreateUser(context.Background(), params)
+	user, err := s.db.CreateUser(context.Background(),
+		database.CreateUserParams{
+			ID:        uuid.New(),
+			CreatedAt: time.Now().UTC(),
+			UpdatedAt: time.Now().UTC(),
+			Name:      cmd.args[0],
+		})
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("couldn't create user: %w", err)
 	}
 
 	err = s.config.SetUser(user.Name)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("couldn't set current user: %w", err)
 	}
 
-	fmt.Printf("user was created: %v\n", user)
+	fmt.Printf("User was created: %v\n", user)
 	return nil
 }
 
 func handlerReset(s *state, cmd command) error {
-	err := s.db.ResetUsers(context.Background())
+	err := s.db.DeleteUsers(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("couldn't delete users: %w", err)
 	}
-
-	fmt.Printf("users reset\n")
+	fmt.Println("Database reset successfully!")
 	return nil
 }

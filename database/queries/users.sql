@@ -12,6 +12,6 @@ FROM
 WHERE
   name = $1;
 
--- name: ResetUsers :exec
+-- name: DeleteUsers :exec
 DELETE FROM users;
 
