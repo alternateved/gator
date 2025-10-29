@@ -37,10 +37,12 @@ func Read() (Config, error) {
 
 func getConfigFilePath() (string, error) {
 	dir, err := os.UserConfigDir()
+	// dir, err := os.UserHomeDir() // for testing
 	if err != nil {
 		return "", err
 	}
 	configPath := filepath.Join(dir, "gator", "config.json")
+	// configPath := filepath.Join(dir, ".gatorconfig.json") // for testing
 	return configPath, nil
 }
 

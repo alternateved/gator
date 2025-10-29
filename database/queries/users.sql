@@ -10,5 +10,5 @@ SELECT
 FROM
   users
 WHERE
-  id = $1;
+  name = $1;
 
