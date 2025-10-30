@@ -7,7 +7,7 @@ import (
 
 	"github.com/alternateved/gator/internal/config"
 	"github.com/alternateved/gator/internal/database"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type state struct {
@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, err := sql.Open("postgres", cfg.DBURL)
+	db, err := sql.Open("pgx", cfg.DBURL)
 	if err != nil {
 		log.Fatal(err)
 	}
