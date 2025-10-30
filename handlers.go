@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alternateved/gator/internal/database"
+	"github.com/alternateved/gator/internal/feeds"
 	"github.com/google/uuid"
 )
 
@@ -76,5 +77,16 @@ func handlerUsers(s *state, cmd command) error {
 		}
 	}
 
+	return nil
+}
+
+func handlerAgg(s *state, cmd command) error {
+	feedURL := "https://www.wagslane.dev/index.xml"
+	feed, err := feeds.FetchFeed(context.Background(), feedURL)
+	if err != nil {
+		return fmt.Errorf("couldn't fetch feed: %w", err)
+	}
+
+	fmt.Printf("Feed: %+v\n", feed)
 	return nil
 }
