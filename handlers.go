@@ -90,3 +90,26 @@ func handlerAgg(s *state, cmd command) error {
 	fmt.Printf("Feed: %+v\n", feed)
 	return nil
 }
+
+func handlerAddFeed(s *state, cmd command) error {
+	if len(cmd.args) < 2 {
+		return fmt.Errorf("usage: %s <name> <url>", cmd.name)
+	}
+
+	user, err := s.db.GetUser(context.Background(), s.config.CurrentUserName)
+	if err != nil {
+		return fmt.Errorf("couldn't find current user: %w", err)
+	}
+
+	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		Name:      cmd.args[0],
+		Url:       cmd.args[1],
+		UserID:    user.ID,
+	})
+
+	fmt.Printf("Feed was created: %v\n", feed)
+	return nil
+}
