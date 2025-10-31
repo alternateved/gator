@@ -15,7 +15,7 @@ func handlerLogin(s *state, cmd command) error {
 		return fmt.Errorf("usage: %s <name>", cmd.name)
 	}
 
-	user, err := s.db.GetUser(context.Background(), cmd.args[0])
+	user, err := s.db.GetUserByName(context.Background(), cmd.args[0])
 	if err != nil {
 		return fmt.Errorf("couldn't find user: %w", err)
 	}
@@ -96,7 +96,7 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("usage: %s <name> <url>", cmd.name)
 	}
 
-	user, err := s.db.GetUser(context.Background(), s.config.CurrentUserName)
+	user, err := s.db.GetUserByName(context.Background(), s.config.CurrentUserName)
 	if err != nil {
 		return fmt.Errorf("couldn't find current user: %w", err)
 	}

@@ -4,7 +4,15 @@ INSERT INTO users (id, created_at, updated_at, name)
 RETURNING
   *;
 
--- name: GetUser :one
+-- name: GetUserById :one
+SELECT
+  *
+FROM
+  users
+WHERE
+  id = $1;
+
+-- name: GetUserByName :one
 SELECT
   *
 FROM
