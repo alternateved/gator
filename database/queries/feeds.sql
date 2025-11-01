@@ -4,6 +4,22 @@ INSERT INTO feeds (id, created_at, updated_at, name, url, user_id)
 RETURNING
   *;
 
+-- name: GetFeedById :one
+SELECT
+  *
+FROM
+  feeds
+WHERE
+  id = $1;
+
+-- name: GetFeedByUrl :one
+SELECT
+  *
+FROM
+  feeds
+WHERE
+  url = $1;
+
 -- name: GetFeeds :many
 SELECT
   *
