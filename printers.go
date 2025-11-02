@@ -18,9 +18,16 @@ func printFeed(feed database.Feed, user database.User) {
 	fmt.Printf("Name:    %s\n", feed.Name)
 	fmt.Printf("URL:     %s\n", feed.Url)
 	fmt.Printf("User:    %s\n", user.Name)
-
 }
+
 func printFeedFollow(userName, feedName string) {
 	fmt.Printf("User:    %s\n", userName)
 	fmt.Printf("Feed:    %s\n", feedName)
+}
+
+func printPost(post database.Post) {
+	fmt.Printf("Title:       %s\n", post.Title)
+	fmt.Printf("URL:         %s\n", post.Url)
+	fmt.Printf("Published:   %s\n", post.PublishedAt)
+	fmt.Printf("Description: %s\n", post.Description)
 }
