@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/alternateved/gator/internal/database"
@@ -220,6 +221,33 @@ func handlerFollowing(s *state, cmd command, user database.User) error {
 	fmt.Printf("Feed follows for user %s:\n", user.Name)
 	for _, ff := range feedFollows {
 		fmt.Printf("* %s\n", ff.FeedName)
+	}
+
+	return nil
+}
+
+func handlerBrowse(s *state, cmd command, user database.User) error {
+	limit := 2
+
+	if len(cmd.args) == 1 {
+		parsedLimit, err := strconv.Atoi(cmd.args[0])
+		if err != nil {
+			return fmt.Errorf("usage: %s <number>", cmd.name)
+		}
+		limit = parsedLimit
+	}
+
+	posts, err := s.db.GetPostsForUser(context.Background(), database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  int32(limit),
+	})
+	if err != nil {
+		return fmt.Errorf("couldn't get posts for user: %w", err)
+	}
+
+	for _, post := range posts {
+		printPost(post)
+		fmt.Println()
 	}
 
 	return nil
