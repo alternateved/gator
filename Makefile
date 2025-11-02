@@ -18,4 +18,7 @@ build: lint
 run: build
 		go run .
 
+install: build
+		go install .
+
 .PHONY: fmt lint test clean build run
