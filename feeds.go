@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/xml"
 	"fmt"
 	"html"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/alternateved/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -84,11 +84,29 @@ func scrapeFeeds(s *state) error {
 		return fmt.Errorf("couldn't fetch feed: %w", err)
 	}
 
-	fmt.Printf("Feed %s:\n", fetchedFeed.Channel.Title)
 	for _, item := range fetchedFeed.Channel.Item {
-		fmt.Printf("* %s\n", item.Title)
+		published, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			return fmt.Errorf("couldn't parse post time: %w", err)
+		}
+
+		_, err = s.db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now().UTC(),
+			UpdatedAt:   time.Now().UTC(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: published,
+			FeedID:      feed.ID,
+		})
+		if err != nil {
+			return fmt.Errorf("encountered issues while creating post: %w", err)
+		}
 	}
-	fmt.Println()
+
+	fmt.Printf("Collected %v items for feed: %s\n",
+		len(fetchedFeed.Channel.Item), fetchedFeed.Channel.Title)
 
 	return nil
 }
