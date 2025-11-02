@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/alternateved/gator/internal/database"
@@ -101,11 +103,15 @@ func scrapeFeeds(s *state) error {
 			FeedID:      feed.ID,
 		})
 		if err != nil {
-			return fmt.Errorf("encountered issues while creating post: %w", err)
+			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				continue
+			}
+			log.Printf("Couldn't create post: %v", err)
+			continue
 		}
 	}
 
-	fmt.Printf("Collected %v items for feed: %s\n",
+	fmt.Printf("Collected %v posts for feed %s\n",
 		len(fetchedFeed.Channel.Item), fetchedFeed.Channel.Title)
 
 	return nil

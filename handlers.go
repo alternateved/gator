@@ -228,13 +228,12 @@ func handlerFollowing(s *state, cmd command, user database.User) error {
 
 func handlerBrowse(s *state, cmd command, user database.User) error {
 	limit := 2
-
 	if len(cmd.args) == 1 {
-		parsedLimit, err := strconv.Atoi(cmd.args[0])
-		if err != nil {
+		if parsedLimit, err := strconv.Atoi(cmd.args[0]); err == nil {
+			limit = parsedLimit
+		} else {
 			return fmt.Errorf("usage: %s <number>", cmd.name)
 		}
-		limit = parsedLimit
 	}
 
 	posts, err := s.db.GetPostsForUser(context.Background(), database.GetPostsForUserParams{
@@ -245,6 +244,7 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("couldn't get posts for user: %w", err)
 	}
 
+	fmt.Printf("Found %d posts for user %s:\n", len(posts), user.Name)
 	for _, post := range posts {
 		printPost(post)
 		fmt.Println()

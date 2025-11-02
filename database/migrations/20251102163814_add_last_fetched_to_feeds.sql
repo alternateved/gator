@@ -4,5 +4,5 @@ ALTER TABLE feeds
 
 -- +goose Down
 ALTER TABLE feeds
-  DROP COLUMN last_fetched_at timestamp;
+  DROP COLUMN last_fetched_at;
 
