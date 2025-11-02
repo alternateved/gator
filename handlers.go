@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/alternateved/gator/internal/database"
-	"github.com/alternateved/gator/internal/feeds"
 	"github.com/google/uuid"
 )
 
@@ -85,14 +84,22 @@ func handlerUsers(s *state, cmd command) error {
 }
 
 func handlerAgg(s *state, cmd command) error {
-	feedURL := "https://www.wagslane.dev/index.xml"
-	feed, err := feeds.FetchFeed(context.Background(), feedURL)
+	duration := "1m0s"
+	timeBetweenRequests, err := time.ParseDuration(duration)
 	if err != nil {
-		return fmt.Errorf("couldn't fetch feed: %w", err)
+		return fmt.Errorf("couldn't parse duration: %w", err)
 	}
 
-	fmt.Printf("Feed: %+v\n", feed)
-	return nil
+	fmt.Printf("Collecting feeds every %s\n", duration)
+	ticker := time.NewTicker(timeBetweenRequests)
+	defer ticker.Stop()
+
+	for ; ; <-ticker.C {
+		err = scrapeFeeds(s)
+		if err != nil {
+			return fmt.Errorf("error while scraping feeds: %w", err)
+		}
+	}
 }
 
 func handlerAddFeed(s *state, cmd command, user database.User) error {
